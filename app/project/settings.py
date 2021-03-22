@@ -57,6 +57,9 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'core',
     'user',
+    'cabinet',
+    'devices',
+    'companies',
     'mathfilters',
     'django_filters',
     

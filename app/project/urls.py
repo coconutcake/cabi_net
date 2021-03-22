@@ -34,6 +34,7 @@ urlpatterns = [
     # api urls
     path('api/user/',include('user.urls')),
     path('api-auth/', include('rest_framework.urls')),
+    path('api/cabinet/', include('cabinet.urls')),
     
     # Swager urls
     url(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),

@@ -1,7 +1,26 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 import datetime
+from django.utils.translation import ugettext_lazy as _
 
+class DefaultObject(models.Model):
+    """
+    Klasa obiektu deafultowego
+    """
+    
+    name = models.CharField(_("Nazwa"), max_length=70)
+    description = models.TextField(_("Opis"), blank = True)
+    
+
+    class Meta:
+        verbose_name = _("DefaultObject")
+        verbose_name_plural = _("DefaultObjects")
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse("DefaultObject_detail", kwargs={"pk": self.pk})
 
 
 class UserManager(BaseUserManager):
