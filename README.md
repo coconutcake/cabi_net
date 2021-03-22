@@ -47,50 +47,43 @@ Projekt aplikacji django umożliwiający użytkownikowi organizacje szafy serwer
 4. Implementacja signals do automatycznego zapisywania ilosci pozycji zgodnych z iloscia u danej szafy przy tworzeniu nowej szafy, oraz dopiecie ownera,
 5. Mozliwosc dodania firmy jako adresata szafy
 6. Bazowa Authentifikacja: Sesyjna, Token, Upoważnienia: dla zalogowanej osoby
+7. Domysle pola `name`, `description` mogą być wskazane w osobnej klasie `DefaultObject` od której, dziedziczyć bedą potomne modele
 
 
 ### 🧩 Modele aplikacji:
- Aplikacja 💻 ***"cabinet"*** - Zarządzanie szafą serwerową, implementacja mechanizmów CRUD na modelach: 
-  - cabinet
-  - u
-  - position
-
-Aplikacja 💻 ***"devices"*** - Zarządzanie urządzeniami szafy serwerowej, implementacja mechanizmów CRUD na modelach:
-  - device
-  - type
-  - manufacture
-
-Aplikacja 💻 ***"companies"*** - Zarządzanie podmiotami u których, szafy są zlokalizowane, implementacja CRUD na modelach:
-  - company
-  - address
-
-
-### Pola:
-💻 **Aplikacja cabinet**:
-- 🧩 ***"Cabinet"*** - Model szafy, posiada pola tj:
+1. Aplikacja **`💻 cabinet`** - Zarządzanie szafą serwerową, implementacja mechanizmów CRUD na modelach: 
+- 🧩 **Cabinet**
   - name (CharField)
   - description (TextField)
   - owner (ForeignKey <- `User`) - wskazuje na autora szafy, moze pozostac NULL
   - company (ForeignKey <- `Company`) - wskazuje na firme dla której swiadczymy daną szafe, może pozostać NULL
   - address (ForeignKey <- `Address`) - pobierze aktualne adresy firmy jesli zostanie wybrana
-
-- 🧩 ***"u"*** - Model pozycji u szafy, posiada pola tj:
+- 🧩 **U**
   - number (IntegerField) - wskazuje numer u
-
-- 🧩 ***"position"*** - model pozycji szafy który, zbiera pozycje "u" oraz podpina urządzenie, posiada pola tj:
+- 🧩 **Position**
   - u (ManyToManyField <- `u`) - przypisuje pozycje z modelu "u", do wyboru są tylko wolne pozycje dla wskazanej szafy, zastosować również validacje serializera aby nie mozna bylo wybrac u której juz sa przez szafe zajete
   - description (TextField) - opis pozycji
 
-  **metody**:
-  - __str__ ma zwracać u+number
-
-💻 **Aplikacja devices**:
-- 🧩 ***"device"*** - Model urzadzania, posiada pola tj:
-  - name (CharField)
+2. Aplikacja **`💻 devices`** - Zarządzanie urządzeniami szafy serwerowej, implementacja mechanizmów CRUD na modelach:
+- 🧩 **Device**
+  - name
   - description (TextField)
-  - manufactirer (ForeignKey <- `Company`) - wskazuje na producenta urządzenia, moze pozostac NULL
-  - company (ForeignKey <- `Company`) - wskazuje na firme dla której swiadczymy daną szafe, może pozostać NULL
-  - address (ForeignKey <- `Address`) - pobierze aktualne adresy firmy jesli zostanie wybrana
+  - type (ForeignKey <- `DeviceType`)
+  - serial (CharField)
+  - manufacturer (ForeignKey <- `Manufacturer`) - wskazuje na producenta urządzenia, moze pozostac NULL
+- 🧩 **DeviceType**
+  - name
+  - description 
+- 🧩 **Manufacturer**:
+  - name
+  - description
+
+
+3. Aplikacja **`💻 companies`** - Zarządzanie podmiotami u których, szafy są zlokalizowane, implementacja CRUD na modelach:
+- 🧩 **Company**
+  - name
+  - description
+  - nip
 
 ## 🧑‍🔬Technologia i metodyka <a name = "tech"></a>
 
