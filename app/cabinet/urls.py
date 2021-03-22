@@ -8,6 +8,7 @@ from rest_framework.schemas import get_schema_view
 app_name = "cabinet"
 
 urlpatterns = [
+    url(r'list/', views.CabinetListApiView.as_view(), name = 'cabinet_list'),
     url(r'get/(?P<pk>\d+)/$', views.CabinetRetrieveApiView.as_view(), name = 'cabinet_get'),
     url(r'create/', views.CabinetCreateApiView.as_view(), name = 'cabinet_create'),
     url(r'detail/(?P<pk>\d+)/$', views.CabinetUpdateApiView.as_view(), name = 'cabinet_detail'),
