@@ -55,22 +55,22 @@ Projekt aplikacji django umożliwiający użytkownikowi organizacje szafy serwer
 - 🧩 **Cabinet**
   - name (CharField)
   - description (TextField)
-  - owner (ForeignKey <- `User`) - wskazuje na autora szafy, moze pozostac NULL
-  - company (ForeignKey <- `Company`) - wskazuje na firme dla której swiadczymy daną szafe, może pozostać NULL
-  - address (ForeignKey <- `Address`) - pobierze aktualne adresy firmy jesli zostanie wybrana
+  - owner (ForeignKey <- `🧩 User`) - wskazuje na autora szafy, moze pozostac NULL
+  - company (ForeignKey <- `🧩 Company`) - wskazuje na firme dla której swiadczymy daną szafe, może pozostać NULL
+  - address (ForeignKey <- `🧩 Address`) - pobierze aktualne adresy firmy jesli zostanie wybrana
 - 🧩 **U**
   - number (IntegerField) - wskazuje numer u
 - 🧩 **Position**
-  - u (ManyToManyField <- `u`) - przypisuje pozycje z modelu "u", do wyboru są tylko wolne pozycje dla wskazanej szafy, zastosować również validacje serializera aby nie mozna bylo wybrac u której juz sa przez szafe zajete
+  - u (ManyToManyField <- `🧩 U`) - przypisuje pozycje z modelu "u", do wyboru są tylko wolne pozycje dla wskazanej szafy, zastosować również validacje serializera aby nie mozna bylo wybrac u której juz sa przez szafe zajete
   - description (TextField) - opis pozycji
 
 2. Aplikacja **`💻 devices`** - Zarządzanie urządzeniami szafy serwerowej, implementacja mechanizmów CRUD na modelach:
 - 🧩 **Device**
   - name
   - description (TextField)
-  - type (ForeignKey <- `DeviceType`)
+  - type (ForeignKey <- `🧩 DeviceType`)
   - serial (CharField)
-  - manufacturer (ForeignKey <- `Manufacturer`) - wskazuje na producenta urządzenia, moze pozostac NULL
+  - manufacturer (ForeignKey <- `🧩 Manufacturer`) - wskazuje na producenta urządzenia, moze pozostac NULL
 - 🧩 **DeviceType**
   - name
   - description 
