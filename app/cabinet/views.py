@@ -21,7 +21,19 @@ API_COMMENTS = {
 }
 
 
-
+class CabinetRetrieveApiView(generics.RetrieveAPIView):
+    model = Cabinet
+    serializer_class = CabinetSerializer
+    queryset = model.objects.all()
+    
+    @swagger_auto_schema(\
+        tags = [model.__name__],
+        operation_description = API_COMMENTS.get("get") + model.__name__,
+        operation_summary = ""
+        )
+    def get(request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+    
 
 class CabinetCreateApiView(generics.CreateAPIView):
     model = Cabinet
@@ -37,3 +49,40 @@ class CabinetCreateApiView(generics.CreateAPIView):
         return super().post(request, *args, **kwargs)
     
     
+class CabinetUpdateApiView(generics.UpdateAPIView):
+    model = Cabinet
+    serializer_class = CabinetSerializer
+    queryset = model.objects.all()
+    
+    
+    @swagger_auto_schema(\
+        tags = [model.__name__],
+        operation_description = API_COMMENTS.get("put") + model.__name__,
+        operation_summary = ""
+        )
+    def put(self, request, *args, **kwargs):
+        return super().put(request, *args, **kwargs)
+    
+    
+    @swagger_auto_schema(\
+        tags = [model.__name__],
+        operation_description = API_COMMENTS.get("patch") + model.__name__,
+        operation_summary = ""
+        )
+    def patch(self, request, *args, **kwargs):
+        return super().patch(request, *args, **kwargs)
+
+
+class CabinetDeleteApiView(generics.DestroyAPIView):
+    model = Cabinet
+    serializer_class = CabinetSerializer
+    queryset = model.objects.all()
+    
+    
+    @swagger_auto_schema(\
+        tags = [model.__name__],
+        operation_description = API_COMMENTS.get("delete") + model.__name__,
+        operation_summary = ""
+        ) 
+    def delete(request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)
