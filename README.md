@@ -1,20 +1,20 @@
 <p align="center">
   <a href="" rel="noopener">
- <img width=200px height=200px src="http://mign.pl/img/logodjangorized.png" alt="Project logo"></a>
+ <img src="http://mign.pl/img/cabinet.png" alt="Project logo"></a>
 </p>
 
-<h3 align="center">Djangorized</h3>
+<h3 align="center">CABI_NET</h3>
 
 <div align="center">
 
-[![Stauts](https://img.shields.io/travis/coconutcake/djangorized)](https://travis-ci.org/github/coconutcake/djangorized)
-[![Requirements Status](https://requires.io/github/coconutcake/djangorized/requirements.svg?branch=main)](https://requires.io/github/coconutcake/djangorized/requirements/?branch=main)
+[![Stauts](https://img.shields.io/travis/coconutcake/cabi_net)](https://travis-ci.org/github/coconutcake/cabi_net)
+[![Requirements Status](https://requires.io/github/coconutcake/cabi_net/requirements.svg?branch=main)](https://requires.io/github/coconutcake/cabi_net/requirements/?branch=main)
 
 </div>
 
 ---
 
-<p align="center"> Zintegrowany projekt aplikacji django na kontenerach dockera
+<p align="center"> Projekt apliakacji do zarządzania szafami serwerowymi
     <br> 
 </p>
 
@@ -27,23 +27,71 @@
 
 ## 🧐 O projekcie <a name = "about"></a>  
 
-Projekt aplikacji django na kontenerach dockera wraz z zintegrowana baza postgres oraz serwerem nginx
+Projekt aplikacji django umożliwiający użytkownikowi organizacje szafy serwerowej i przygotowanie dokumentacji
 
 ## 📰 Założenia projektowe <a name = "zalozenia"></a>
 
-#### Konteneryzacja i usługi:
+#### 🛳️ Konteneryzacja i usługi:
 1. Utworzenie spójnego modelu konteneryzacji z uwzględnieniem plików `Dockerfile` w osobnych folderach dla każdego kontenera.
 2. Utworzenie i skonfigurowanie bazy danych postgres na osobnym kontenerze dla aplikacji i testów
 3. Utworzenie kontenera dla serwera upstreamowego Nginx oraz wystawienie za jego pomoca dwuch serwerów - HTTP oraz HTTPS
 4. Dodatkowa konfiguracja serwera nginx - dodanie certyfikatów SSL oraz konfiguracja proxy-reverse
 5. Implementacja zmiennych środowiskowych w pliku `docker-compose.yml` za pomocą których, aplikacja oraz zależne od niej kontenery będą wstępnie prekonfigowalne na etapie developingu oraz wdrażania np. dla rozwiazania chmurowego
 6. Utworzenie modułu inicjującego dla aplikacji Django celem radzenia sobie z typowymi operacjami na pliku `manage.py`
-
-#### Aplikacja Django:
+---
+#### 💻 Aplikacje:
 1. Przekonfigurowanie modelu logowania za pomocą email i hasła
-2. Dostarczenie przeglądarki API
+2. Dostarczenie przeglądarki API (Swagger)
+3. Podział projektu na 3 aplikacje: cabinet - do zarzadzania szafą, devices - do zarzadzania urzadzeniami, companies - do zarzadzania firmami,
+4. Implementacja signals do automatycznego zapisywania ilosci pozycji zgodnych z iloscia u danej szafy przy tworzeniu nowej szafy, oraz dopiecie ownera,
+5. Mozliwosc dodania firmy jako adresata szafy
+6. Bazowa Authentifikacja: Sesyjna, Token, Upoważnienia: dla zalogowanej osoby
 
+---
+#### 🧩 Modele aplikacji:
+ Aplikacja 💻 ***"cabinet"*** - Zarządzanie szafą serwerową, implementacja mechanizmów CRUD na modelach: 
+  - cabinet
+  - u
+  - position
 
+Aplikacja 💻 ***"devices"*** - Zarządzanie urządzeniami szafy serwerowej, implementacja mechanizmów CRUD na modelach:
+  - device
+  - type
+  - manufacture
+
+Aplikacja 💻 ***"companies"*** - Zarządzanie podmiotami u których, szafy są zlokalizowane, implementacja CRUD na modelach:
+  - company
+  - address
+
+---
+#### Pola:
+💻 **Aplikacja cabinet**:
+- 🧩 ***"Cabinet"*** - Model szafy, posiada pola tj:
+  - name (CharField)
+  - description (TextField)
+  - owner (ForeignKey <- `User`) - wskazuje na autora szafy, moze pozostac NULL
+  - company (ForeignKey <- `Company`) - wskazuje na firme dla której swiadczymy daną szafe, może pozostać NULL
+  - address (ForeignKey <- `Address`) - pobierze aktualne adresy firmy jesli zostanie wybrana
+
+- 🧩 ***"u"*** - Model pozycji u szafy, posiada pola tj:
+  - number (IntegerField) - wskazuje numer u
+
+- 🧩 ***"position"*** - model pozycji szafy który, zbiera pozycje "u" oraz podpina urządzenie, posiada pola tj:
+  - u (ManyToManyField <- `u`) - przypisuje pozycje z modelu "u", do wyboru są tylko wolne pozycje dla wskazanej szafy, zastosować również validacje serializera aby nie mozna bylo wybrac u której juz sa przez szafe zajete
+  - description (TextField) - opis pozycji
+
+  **metody**:
+  - __str__ ma zwracać u+number
+
+💻 **Aplikacja devices**:
+- 🧩 ***"device"*** - Model urzadzania, posiada pola tj:
+  - name (CharField)
+  - description (TextField)
+  - manufactirer (ForeignKey <- `Company`) - wskazuje na producenta urządzenia, moze pozostac NULL
+  - company (ForeignKey <- `Company`) - wskazuje na firme dla której swiadczymy daną szafe, może pozostać NULL
+  - address (ForeignKey <- `Address`) - pobierze aktualne adresy firmy jesli zostanie wybrana
+
+---
 ## 🧑‍🔬Technologia i metodyka <a name = "tech"></a>
 
 #### Podział kontenerów Dockera:
@@ -146,7 +194,7 @@ SERVER_NAME=default_server_ip
 
 Wykonaj klona jesli masz juz zainstalowanego dockera:
 ```
-git clone https://github.com/coconutcake/djangorized.git
+git clone https://github.com/coconutcake/cabi_net.git
 ```
 
 Po pobraniu klona, przejdz do folderu i zbuduj obrazy poleceniem:
