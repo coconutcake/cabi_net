@@ -68,6 +68,7 @@ class CabinetRetrieveApiView(generics.RetrieveAPIView):
         return super().get(request, *args, **kwargs)
 
 
+
 class CabinetCreateApiView(generics.CreateAPIView):
     model = Cabinet
     responce_serializer = CabinetSerializer
@@ -97,6 +98,7 @@ class CabinetCreateApiView(generics.CreateAPIView):
         with request.user instance
         """
         return serializer.save(owner=self.request.user)
+
 
 
 class CabinetUpdateApiView(generics.UpdateAPIView):
@@ -129,6 +131,7 @@ class CabinetUpdateApiView(generics.UpdateAPIView):
         )
     def patch(self, request, *args, **kwargs):
         return super().patch(request, *args, **kwargs)
+
 
 
 class CabinetDeleteApiView(generics.DestroyAPIView):

@@ -17,6 +17,7 @@ class Cabinet(DefaultObject, models.Model):
         blank=True
         )   
     
+
     
 
     class Meta:

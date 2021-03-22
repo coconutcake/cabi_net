@@ -12,6 +12,7 @@ from core.additionals.functions import *
 
 
 # URLS
+LIST_CABINET_URL = "cabinet:cabinet_list"
 RETRIEVE_CABINET_URL = "cabinet:cabinet_get"
 CREATE_CABINET_URL = "cabinet:cabinet_create"
 DETAIL_CABINET_URL = "cabinet:cabinet_detail"
@@ -25,18 +26,28 @@ class CabinetApiCase(TestCase):
     
     def setUp(self):
         self.authenticated = APIClient()
+        self.authenticated_2 = APIClient()
         self.unauthorized = APIClient()
         self.model = Cabinet
         user_payload = {
             "email": "sample@email.com",
             "password": "asdafdgsdgrtv"
         }
+        user_payload_2 = {
+            "email": "asda@easdl.net",
+            "password": "adasddgsdgrtv"
+        }
 
         self.user = create_user(**user_payload)
+        self.user_2 = create_user(**user_payload_2)
+
         self.token = create_token(self.user)
+        self.token_2 = create_token(self.user_2)
+
         self.authenticated.force_authenticate(user=self.user, token=self.token)
-        
-        
+        self.authenticated_2.force_authenticate(user=self.user_2, token=self.token_2)
+    
+    
     # Authenticated tests
     def test_if_created_auth_success(self):
         """
@@ -93,10 +104,10 @@ class CabinetApiCase(TestCase):
             )
         
         cabinet_payload_1_fk['id'] = edited.data['id']
-              
+        
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         self.assertEqual(edited.data, cabinet_payload_1_fk)
-        
+    
     
     def test_if_deleted_auth_success(self):
         """
@@ -119,7 +130,53 @@ class CabinetApiCase(TestCase):
             reverse(DELETE_CABINET_URL, kwargs={'pk': created.data.get("id")}))
             
         self.assertEqual(deleted.status_code, status.HTTP_204_NO_CONTENT)
+    
+
+    def test_if_delete_auth_queryset_works(self):
+        """
+        Tests if get_queryset() filter properly instances of owner only
+        """
+
+        cabinet_payload_0 = {
+            "name": "szafa1",
+            "description": "opis",
+            "owner": self.user
+        }
         
+        cabinet_payload_fk_0= cabinet_payload_0.copy()
+        cabinet_payload_fk_0['owner'] = self.user.id
+
+        cabinet_payload_1 = {
+            "name": "sasdaa2",
+            "description": "23",
+            "owner": self.user
+        }
+        
+        cabinet_payload_fk_1 = cabinet_payload_1.copy()
+        cabinet_payload_fk_1['owner'] = self.user.id
+
+        res_1 = self.authenticated.post(
+            reverse(CREATE_CABINET_URL), data=cabinet_payload_fk_0
+        )
+        res_2 = self.authenticated_2.post(
+            reverse(CREATE_CABINET_URL), data=cabinet_payload_fk_1
+        )
+
+
+        del_1 = self.authenticated.delete(
+            reverse(DELETE_CABINET_URL, kwargs={'pk': res_2.data.get("id")})
+        )
+        get_2 = self.authenticated_2.get(
+            reverse(LIST_CABINET_URL)
+        )
+
+
+        self.assertEqual(res_1.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(res_2.status_code, status.HTTP_201_CREATED)
+
+        self.assertEqual(del_1.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertIn(res_2.data, get_2.data)
+    
     
     def test_if_retrieve_auth_success(self):
         """
@@ -144,7 +201,70 @@ class CabinetApiCase(TestCase):
         
         self.assertEqual(get.status_code, status.HTTP_200_OK)
         self.assertEqual(get.data, cabinet_payload_0_fk)
+    
+    
+    def test_if_list_auth_success(self):
+        """
+        Tests if list is available for auth user
+        """
+        cabinet_payload = {
+            "name": "szafa1",
+            "description": "opis",
+            "owner": self.user
+        }
         
+        cabinet_payload_fk = cabinet_payload.copy()
+        cabinet_payload_fk['owner'] = self.user.id
+
+        created = self.authenticated.post(
+            reverse(CREATE_CABINET_URL), data=cabinet_payload_fk)
+
+        res = self.authenticated.get(
+            reverse(LIST_CABINET_URL))
         
+        self.assertTrue(res.data)
+        self.assertIn(created.data, res.data)
+
+    
+    def test_if_list_auth_queryset_works(self):
+        """
+        Tests if get_queryset() properly lists instances of owner only
+        """
+        cabinet_payload_0 = {
+            "name": "szafa1",
+            "description": "opis",
+            "owner": self.user
+        }
         
-    # Unouthorized tests
+        cabinet_payload_fk_0= cabinet_payload_0.copy()
+        cabinet_payload_fk_0['owner'] = self.user.id
+
+        cabinet_payload_1 = {
+            "name": "sasdaa2",
+            "description": "23",
+            "owner": self.user
+        }
+        
+        cabinet_payload_fk_1 = cabinet_payload_1.copy()
+        cabinet_payload_fk_1['owner'] = self.user.id
+
+        res_1 = self.authenticated.post(
+            reverse(CREATE_CABINET_URL), data=cabinet_payload_fk_0
+        )
+        res_2 = self.authenticated_2.post(
+            reverse(CREATE_CABINET_URL), data=cabinet_payload_fk_1
+        )
+
+        get_1 = self.authenticated.get(reverse(LIST_CABINET_URL))
+        get_2 = self.authenticated_2.get(reverse(LIST_CABINET_URL))
+
+        self.assertIn(res_1.data, get_1.data)
+        self.assertIn(res_2.data, get_2.data)
+
+        self.assertNotIn(res_1.data, get_2.data)
+    
+    
+    
+    
+    
+    # Anouthorized tests
