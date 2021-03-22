@@ -14,7 +14,7 @@
 
 ---
 
-<p align="center"> Projekt apliakacji do zarządzania szafami serwerowymi
+<p align="center"> Projekt aplikacji do zarządzania szafami serwerowymi
     <br> 
 </p>
 
@@ -31,15 +31,16 @@ Projekt aplikacji django umożliwiający użytkownikowi organizacje szafy serwer
 
 ## 📰 Założenia projektowe <a name = "zalozenia"></a>
 
-#### 🛳️ Konteneryzacja i usługi:
+### 🛳️ Konteneryzacja i usługi:
+
 1. Utworzenie spójnego modelu konteneryzacji z uwzględnieniem plików `Dockerfile` w osobnych folderach dla każdego kontenera.
 2. Utworzenie i skonfigurowanie bazy danych postgres na osobnym kontenerze dla aplikacji i testów
 3. Utworzenie kontenera dla serwera upstreamowego Nginx oraz wystawienie za jego pomoca dwuch serwerów - HTTP oraz HTTPS
 4. Dodatkowa konfiguracja serwera nginx - dodanie certyfikatów SSL oraz konfiguracja proxy-reverse
 5. Implementacja zmiennych środowiskowych w pliku `docker-compose.yml` za pomocą których, aplikacja oraz zależne od niej kontenery będą wstępnie prekonfigowalne na etapie developingu oraz wdrażania np. dla rozwiazania chmurowego
 6. Utworzenie modułu inicjującego dla aplikacji Django celem radzenia sobie z typowymi operacjami na pliku `manage.py`
----
-#### 💻 Aplikacje:
+
+### 💻 Aplikacje:
 1. Przekonfigurowanie modelu logowania za pomocą email i hasła
 2. Dostarczenie przeglądarki API (Swagger)
 3. Podział projektu na 3 aplikacje: cabinet - do zarzadzania szafą, devices - do zarzadzania urzadzeniami, companies - do zarzadzania firmami,
@@ -47,8 +48,8 @@ Projekt aplikacji django umożliwiający użytkownikowi organizacje szafy serwer
 5. Mozliwosc dodania firmy jako adresata szafy
 6. Bazowa Authentifikacja: Sesyjna, Token, Upoważnienia: dla zalogowanej osoby
 
----
-#### 🧩 Modele aplikacji:
+
+### 🧩 Modele aplikacji:
  Aplikacja 💻 ***"cabinet"*** - Zarządzanie szafą serwerową, implementacja mechanizmów CRUD na modelach: 
   - cabinet
   - u
@@ -63,8 +64,8 @@ Aplikacja 💻 ***"companies"*** - Zarządzanie podmiotami u których, szafy są
   - company
   - address
 
----
-#### Pola:
+
+### Pola:
 💻 **Aplikacja cabinet**:
 - 🧩 ***"Cabinet"*** - Model szafy, posiada pola tj:
   - name (CharField)
@@ -91,7 +92,6 @@ Aplikacja 💻 ***"companies"*** - Zarządzanie podmiotami u których, szafy są
   - company (ForeignKey <- `Company`) - wskazuje na firme dla której swiadczymy daną szafe, może pozostać NULL
   - address (ForeignKey <- `Address`) - pobierze aktualne adresy firmy jesli zostanie wybrana
 
----
 ## 🧑‍🔬Technologia i metodyka <a name = "tech"></a>
 
 #### Podział kontenerów Dockera:
