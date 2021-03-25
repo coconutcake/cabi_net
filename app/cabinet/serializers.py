@@ -1,11 +1,21 @@
 from rest_framework import serializers
 from cabinet.models import *
+from django.contrib.auth import get_user_model
+
+
+class OwnerSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = get_user_model()
+        exclude = ("password",)
+
 
 class CabinetSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Cabinet
         fields = "__all__"
+
 
 class CabinetAccessSerializer(CabinetSerializer, serializers.ModelSerializer):
 
@@ -15,5 +25,9 @@ class CabinetAccessSerializer(CabinetSerializer, serializers.ModelSerializer):
 
 
 
+class CabinetAccessSerializerExpanded(CabinetAccessSerializer, serializers.ModelSerializer):
 
+    owner = OwnerSerializer()
 
+    class Meta(CabinetSerializer.Meta):
+        pass
