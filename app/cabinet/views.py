@@ -15,6 +15,7 @@ from drf_yasg.utils import swagger_auto_schema
 API_COMMENTS = {
     "create": "Tworzy nowy obiekt modelu ",
     "get": "Zwraca instancje obiektu ",
+    "get_exp": "Zwraca rozszeżoną instancje obiektu ",
     "list": "Zwraca liste instancji ",
     "put": "Edytuje pola instacji modelu ",
     "delete": "Usuwa instancje obiektu ",
@@ -24,7 +25,7 @@ API_COMMENTS = {
 
 class CabinetListApiView(generics.ListAPIView):
     model = Cabinet
-    serializer_class = CabinetSerializer
+    serializer_class = CabinetAccessSerializer
     queryset = model.objects.all()
 
     def get_queryset(self):
@@ -47,7 +48,7 @@ class CabinetListApiView(generics.ListAPIView):
 
 class CabinetRetrieveApiView(generics.RetrieveAPIView):
     model = Cabinet
-    serializer_class = CabinetSerializer
+    serializer_class = CabinetAccessSerializer
     queryset = model.objects.all()
     
     def get_queryset(self):
@@ -69,9 +70,24 @@ class CabinetRetrieveApiView(generics.RetrieveAPIView):
 
 
 
+class CabinetRetrieveExpandedApiView(CabinetRetrieveApiView, generics.RetrieveAPIView):
+        
+    model = CabinetRetrieveApiView.model
+    serializer_class = CabinetAccessSerializerExpanded
+
+    @swagger_auto_schema(\
+        tags = [model.__name__],
+        operation_description = API_COMMENTS.get("get_exp") + model.__name__,
+        operation_summary = ""
+        )
+    def get(request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+
+
 class CabinetCreateApiView(generics.CreateAPIView):
     model = Cabinet
-    responce_serializer = CabinetSerializer
+    responce_serializer = CabinetAccessSerializer
     serializer_class = CabinetAccessSerializer
     
     @swagger_auto_schema(\
@@ -103,7 +119,7 @@ class CabinetCreateApiView(generics.CreateAPIView):
 
 class CabinetUpdateApiView(generics.UpdateAPIView):
     model = Cabinet
-    respose_serializer = CabinetSerializer
+    respose_serializer = CabinetAccessSerializer
     serializer_class = CabinetAccessSerializer
     queryset = model.objects.all()
     
@@ -136,7 +152,7 @@ class CabinetUpdateApiView(generics.UpdateAPIView):
 
 class CabinetDeleteApiView(generics.DestroyAPIView):
     model = Cabinet
-    serializer_class = CabinetSerializer
+    serializer_class = CabinetAccessSerializer
     queryset = model.objects.all()
     
     def get_queryset(self):

@@ -10,6 +10,7 @@ app_name = "cabinet"
 urlpatterns = [
     url(r'list/', views.CabinetListApiView.as_view(), name = 'cabinet_list'),
     url(r'get/(?P<pk>\d+)/$', views.CabinetRetrieveApiView.as_view(), name = 'cabinet_get'),
+    url(r'get_exp/(?P<pk>\d+)/$', views.CabinetRetrieveExpandedApiView.as_view(), name = 'cabinet_get_exp'),
     url(r'create/', views.CabinetCreateApiView.as_view(), name = 'cabinet_create'),
     url(r'detail/(?P<pk>\d+)/$', views.CabinetUpdateApiView.as_view(), name = 'cabinet_detail'),
     url(r'delete/(?P<pk>\d+)/$', views.CabinetDeleteApiView.as_view(), name = 'cabinet_delete'),
