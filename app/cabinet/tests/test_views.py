@@ -17,6 +17,7 @@ from core.additionals.generators import *
 # URLS
 LIST_CABINET_URL = "cabinet:cabinet_list"
 RETRIEVE_CABINET_URL = "cabinet:cabinet_get"
+RETRIEVE_EXPANDED_CABINET_URL = "cabinet:cabinet_get_exp"
 CREATE_CABINET_URL = "cabinet:cabinet_create"
 DETAIL_CABINET_URL = "cabinet:cabinet_detail"
 DELETE_CABINET_URL = "cabinet:cabinet_delete"
@@ -221,6 +222,47 @@ class CabinetApiCase(TestCase):
         self.assertEqual(get.status_code, status.HTTP_200_OK)
         self.assertEqual(get.data, payload_0)
     
+
+    def test_if_retrieve_auth_success_expanded(self):
+        """
+        Tests if retrieved expanded serializer providing auth data
+        """
+
+        p_gen = self.model_obj_payload_gen()
+
+        payload_0 = p_gen.__next__()
+
+
+        created = self.authenticated.post(\
+            reverse(CREATE_CABINET_URL), data=payload_0)
+
+        get = self.authenticated.get(\
+            reverse(RETRIEVE_EXPANDED_CABINET_URL, kwargs={'pk': created.data['id']}))
+
+
+        self.assertEqual(created.status_code, status.HTTP_201_CREATED)
+
+
+    def test_if_retrieve_auth_queryset_works_expanded(self):
+        """
+        Tests if get_queryset() returns only owner records
+        """
+
+        p_gen = self.model_obj_payload_gen()
+
+        payload_0 = p_gen.__next__()
+
+
+        created = self.authenticated.post(\
+            reverse(CREATE_CABINET_URL), data=payload_0)
+        
+        not_retrived = self.authenticated_2.get(\
+            reverse(RETRIEVE_EXPANDED_CABINET_URL, kwargs={'pk': created.data['id']}))
+        
+        
+        self.assertEqual(created.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(not_retrived.status_code, status.HTTP_404_NOT_FOUND)
+
 
     def test_if_retrieve_auth_queryset_works(self):
         """
