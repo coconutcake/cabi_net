@@ -16,6 +16,7 @@ class CabinetSerializer(serializers.ModelSerializer):
         model = Cabinet
         fields = "__all__"
 
+        
 
 class CabinetAccessSerializer(CabinetSerializer, serializers.ModelSerializer):
 
@@ -30,4 +31,5 @@ class CabinetAccessSerializerExpanded(CabinetAccessSerializer, serializers.Model
     owner = OwnerSerializer()
 
     class Meta(CabinetSerializer.Meta):
-        pass
+        fields = CabinetAccessSerializer.Meta.fields
+        read_only_fields = CabinetAccessSerializer.Meta.read_only_fields
