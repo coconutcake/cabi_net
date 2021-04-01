@@ -59,7 +59,7 @@ Projekt aplikacji django umożliwiający użytkownikowi organizacje szafy serwer
   - company (ForeignKey <- `🧩 Company`) - wskazuje na firme dla której swiadczymy daną szafe, może pozostać NULL
   - address (ForeignKey <- `🧩 Address`) - pobierze aktualne adresy firmy jesli zostanie wybrana
 - 🧩 **U**
-  - number (IntegerField) - wskazuje numer u
+  - position (IntegerField) - wskazuje numer pozycji u w szafie - zastosowany validator od 1-100
 - 🧩 **Position**
   - u (ManyToManyField <- `🧩 U`) - przypisuje pozycje z modelu "u", do wyboru są tylko wolne pozycje dla wskazanej szafy, zastosować również validacje serializera aby nie mozna bylo wybrac u której juz sa przez szafe zajete
   - description (TextField) - opis pozycji
