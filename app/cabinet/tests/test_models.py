@@ -1,109 +1,102 @@
-
-
 from django.test import TestCase
 from django.forms.models import model_to_dict
 from django.db import IntegrityError
 
 from cabinet.models import Cabinet
 from core.additionals.functions import *
-
+from core.additionals.generators import *
 
 
 class CabinetCase(TestCase):
     """
     Testing model Cabinet
     """
-    
+
     def setUp(self):
         self.model = Cabinet
-        user = {
-            "email": "sample@email.com",
-            "password": "asdafdgsdgrtv"
-        }
+        self.user = create_user(**user_payload_gen().__next__())
+        self.instances_fields = get_model_payload_instances_fields(
+            self.model_obj_payload_gen().__next__()
+        )
 
-        self.user = create_user(**user)
-   
-        
+    def model_obj_payload_gen(self):
+        """
+        Generates various model object payloads (must to be customized)
+        """
+
+        while True:
+
+            string_gen = custom_string_gen(
+                big_letters=True, digits=True, gen_range=[5, 16]
+            )
+
+            payload = {
+                "name": string_gen.__next__(),
+                "description": string_gen.__next__(),
+                "owner": self.user,
+            }
+
+            yield payload
+
     def test_if_created_success(self):
         """
         Tests if model is created providing minimal proper data
         """
-        
-        params = {
-            "name": "szafa1",
-            "description": "opis",
-            "owner": self.user,
-        }
-        
-        params_fk = params.copy()
-        params_fk['owner'] = self.user.id
-        
-        created = self.model.objects.create(**params)
-        
-        self.assertTrue(created)
-        self.assertEqual(
-            model_to_dict(created, fields = params.keys()),
-            params_fk)
 
+        p_gen = self.model_obj_payload_gen()
+
+        payload_0 = p_gen.__next__()
+
+        created = self.model.objects.create(**payload_0)
+
+        created_with_instances = model_to_dict_with_instances(
+            instance=created, fields=payload_0, instance_fields=self.instances_fields
+        )
+
+        self.assertTrue(created)
+        self.assertEqual(created_with_instances, payload_0)
 
     def test_if_updated_success(self):
         """ 
         Tests if object is updated 
         """
-        
-        params_0 = {
-            "name": "szafa1",
-            "description": "opis",
-            "owner": self.user,
-            }
-        
-        params_0_fk = params_0.copy()
-        params_0_fk['owner'] = self.user.id
-        
-        params_1 = {
-            "name": "szafa2",
-            "description": "opis2",
-            "owner": self.user,
-        }
-        
-        params_1_fk = params_1.copy()
-        params_1_fk['owner'] = self.user.id
-        
-        
-        created = self.model.objects.create(**params_0)
-        self.model.objects.filter(pk=created.pk).update(**params_1)
-        updated = self.model.objects.get(pk=created.pk)
-        
-        self.assertEqual(
-            model_to_dict(updated, fields=params_1.keys()),params_1_fk)
 
-    
+        p_gen = self.model_obj_payload_gen()
+
+        payload_0 = p_gen.__next__()
+        payload_1 = p_gen.__next__()
+
+        created = self.model.objects.create(**payload_0)
+
+        self.model.objects.filter(pk=created.pk).update(**payload_1)
+
+        updated = self.model.objects.get(pk=created.pk)
+
+        updated_with_instances = model_to_dict_with_instances(
+            instance=updated, fields=payload_0, instance_fields=self.instances_fields
+        )
+
+        self.assertEqual(updated_with_instances, payload_1)
+
     def test_if_deleted_success(self):
         """
         Tests if deleted
         """
-        
-        params_0 = {
-            "name": "szafa1",
-            "description": "opis",
-            "owner": self.user,
-            }
-        
-        params_0_fk = params_0.copy()
-        params_0_fk['owner'] = self.user.id
-        
-        created = self.model.objects.create(**params_0)
-        
+
+        p_gen = self.model_obj_payload_gen()
+
+        payload_0 = p_gen.__next__()
+
+        created = self.model.objects.create(**payload_0)
+
+        created_with_instances = model_to_dict_with_instances(
+            instance=created, fields=payload_0, instance_fields=self.instances_fields
+        )
+
         self.assertTrue(created)
-        self.assertEqual(
-            model_to_dict(created, fields = params_0.keys()),
-            params_0_fk)
-        
+        self.assertEqual(created_with_instances, payload_0)
+
         self.model.objects.filter(pk=created.id).delete()
-        
+
         self.assertFalse(self.model.objects.filter(pk=created.pk).exists())
-        
-        
-        
-        
-        
+

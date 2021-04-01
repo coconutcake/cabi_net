@@ -59,7 +59,6 @@ class CabinetApiCase(TestCase):
                 "description": string_gen.__next__(),
                 "owner": self.user,
             }
-            payload["owner"] = self.user.id
 
             yield payload
 
@@ -73,7 +72,10 @@ class CabinetApiCase(TestCase):
 
         payload_0 = p_gen.__next__()
 
-        created = self.authenticated.post(reverse(CREATE_CABINET_URL), data=payload_0)
+        created = self.authenticated.post(
+            reverse(CREATE_CABINET_URL),
+            data=convert_model_payload_no_instances(payload_0),
+        )
 
         self.assertEqual(created.status_code, status.HTTP_201_CREATED)
 
@@ -86,17 +88,19 @@ class CabinetApiCase(TestCase):
 
         payload_0, payload_1 = p_gen.__next__(), p_gen.__next__()
 
-        created = self.authenticated.post(reverse(CREATE_CABINET_URL), data=payload_0)
+        created = self.authenticated.post(
+            reverse(CREATE_CABINET_URL), convert_model_payload_no_instances(payload_0)
+        )
 
         edited = self.authenticated.put(
             reverse(DETAIL_CABINET_URL, kwargs={"pk": created.data.get("id")}),
-            data=payload_1,
+            data=convert_model_payload_no_instances(payload_1),
         )
 
         payload_1["id"] = edited.data["id"]
 
         self.assertEqual(created.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(edited.data, payload_1)
+        self.assertEqual(edited.data, convert_model_payload_no_instances(payload_1))
 
     def test_if_updated_auth_queryset_success(self):
         """
@@ -107,14 +111,17 @@ class CabinetApiCase(TestCase):
 
         payload_0, payload_1 = p_gen.__next__(), p_gen.__next__()
 
-        created_1 = self.authenticated.post(reverse(CREATE_CABINET_URL), data=payload_0)
+        created_1 = self.authenticated.post(
+            reverse(CREATE_CABINET_URL), convert_model_payload_no_instances(payload_0)
+        )
         created_2 = self.authenticated_2.post(
-            reverse(CREATE_CABINET_URL), data=payload_1
+            reverse(CREATE_CABINET_URL),
+            data=convert_model_payload_no_instances(payload_1),
         )
 
         not_updated = self.authenticated_2.put(
             reverse(DETAIL_CABINET_URL, kwargs={"pk": created_1.data.get("id")}),
-            data=payload_1,
+            data=convert_model_payload_no_instances(payload_1),
         )
 
         get_2 = self.authenticated_2.get(reverse(LIST_CABINET_URL))
@@ -134,7 +141,9 @@ class CabinetApiCase(TestCase):
 
         payload_0, payload_1 = p_gen.__next__(), p_gen.__next__()
 
-        created = self.authenticated.post(reverse(CREATE_CABINET_URL), data=payload_0)
+        created = self.authenticated.post(
+            reverse(CREATE_CABINET_URL), convert_model_payload_no_instances(payload_0)
+        )
 
         deleted = self.authenticated.delete(
             reverse(DELETE_CABINET_URL, kwargs={"pk": created.data.get("id")})
@@ -151,9 +160,14 @@ class CabinetApiCase(TestCase):
 
         payload_0, payload_1 = p_gen.__next__(), p_gen.__next__()
 
-        post_1 = self.authenticated.post(reverse(CREATE_CABINET_URL), data=payload_0)
+        post_1 = self.authenticated.post(
+            reverse(CREATE_CABINET_URL), convert_model_payload_no_instances(payload_0)
+        )
 
-        post_2 = self.authenticated_2.post(reverse(CREATE_CABINET_URL), data=payload_1)
+        post_2 = self.authenticated_2.post(
+            reverse(CREATE_CABINET_URL),
+            data=convert_model_payload_no_instances(payload_1),
+        )
 
         del_1 = self.authenticated.delete(
             reverse(DELETE_CABINET_URL, kwargs={"pk": post_2.data.get("id")})
@@ -176,7 +190,9 @@ class CabinetApiCase(TestCase):
 
         payload_0, payload_1 = p_gen.__next__(), p_gen.__next__()
 
-        created = self.authenticated.post(reverse(CREATE_CABINET_URL), data=payload_0)
+        created = self.authenticated.post(
+            reverse(CREATE_CABINET_URL), convert_model_payload_no_instances(payload_0)
+        )
 
         get = self.authenticated.get(
             reverse(RETRIEVE_CABINET_URL, kwargs={"pk": created.data.get("id")})
@@ -184,8 +200,9 @@ class CabinetApiCase(TestCase):
 
         payload_0["id"] = get.data.get("id")
 
+        self.assertEqual(created.status_code, status.HTTP_201_CREATED)
         self.assertEqual(get.status_code, status.HTTP_200_OK)
-        self.assertEqual(get.data, payload_0)
+        self.assertEqual(get.data, convert_model_payload_no_instances(payload_0))
 
     def test_if_retrieve_auth_success_expanded(self):
         """
@@ -196,7 +213,9 @@ class CabinetApiCase(TestCase):
 
         payload_0 = p_gen.__next__()
 
-        created = self.authenticated.post(reverse(CREATE_CABINET_URL), data=payload_0)
+        created = self.authenticated.post(
+            reverse(CREATE_CABINET_URL), convert_model_payload_no_instances(payload_0)
+        )
 
         get = self.authenticated.get(
             reverse(RETRIEVE_EXPANDED_CABINET_URL, kwargs={"pk": created.data["id"]})
@@ -213,7 +232,9 @@ class CabinetApiCase(TestCase):
 
         payload_0 = p_gen.__next__()
 
-        created = self.authenticated.post(reverse(CREATE_CABINET_URL), data=payload_0)
+        created = self.authenticated.post(
+            reverse(CREATE_CABINET_URL), convert_model_payload_no_instances(payload_0)
+        )
 
         not_retrived = self.authenticated_2.get(
             reverse(RETRIEVE_EXPANDED_CABINET_URL, kwargs={"pk": created.data["id"]})
@@ -231,7 +252,9 @@ class CabinetApiCase(TestCase):
 
         payload_0 = p_gen.__next__()
 
-        created = self.authenticated.post(reverse(CREATE_CABINET_URL), data=payload_0)
+        created = self.authenticated.post(
+            reverse(CREATE_CABINET_URL), convert_model_payload_no_instances(payload_0)
+        )
 
         not_retrived = self.authenticated_2.get(
             reverse(RETRIEVE_CABINET_URL, kwargs={"pk": created.data["id"]})
@@ -249,7 +272,9 @@ class CabinetApiCase(TestCase):
 
         payload_0, payload_1 = p_gen.__next__(), p_gen.__next__()
 
-        created = self.authenticated.post(reverse(CREATE_CABINET_URL), data=payload_0)
+        created = self.authenticated.post(
+            reverse(CREATE_CABINET_URL), convert_model_payload_no_instances(payload_0)
+        )
 
         res = self.authenticated.get(reverse(LIST_CABINET_URL))
 
@@ -289,7 +314,7 @@ class CabinetApiCase(TestCase):
         payload_0 = p_gen.__next__()
 
         not_created = self.unauthorized.post(
-            reverse(CREATE_CABINET_URL), data=payload_0
+            reverse(CREATE_CABINET_URL), convert_model_payload_no_instances(payload_0)
         )
 
         self.assertEqual(not_created.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -303,11 +328,13 @@ class CabinetApiCase(TestCase):
 
         payload_0, payload_1 = p_gen.__next__(), p_gen.__next__()
 
-        created = self.authenticated.post(reverse(CREATE_CABINET_URL), data=payload_0)
+        created = self.authenticated.post(
+            reverse(CREATE_CABINET_URL), convert_model_payload_no_instances(payload_0)
+        )
 
         not_updated = self.unauthorized.put(
             reverse(DETAIL_CABINET_URL, kwargs={"pk": created.data["id"]}),
-            data=payload_1,
+            data=convert_model_payload_no_instances(payload_1),
         )
 
         self.assertEqual(created.status_code, status.HTTP_201_CREATED)
@@ -322,7 +349,9 @@ class CabinetApiCase(TestCase):
 
         payload_0 = p_gen.__next__()
 
-        created = self.authenticated.post(reverse(CREATE_CABINET_URL), data=payload_0)
+        created = self.authenticated.post(
+            reverse(CREATE_CABINET_URL), convert_model_payload_no_instances(payload_0)
+        )
 
         not_deleted = self.unauthorized.delete(
             reverse(DELETE_CABINET_URL, kwargs={"pk": created.data["id"]})
@@ -340,7 +369,9 @@ class CabinetApiCase(TestCase):
 
         payload_0 = p_gen.__next__()
 
-        created = self.authenticated.post(reverse(CREATE_CABINET_URL), data=payload_0)
+        created = self.authenticated.post(
+            reverse(CREATE_CABINET_URL), convert_model_payload_no_instances(payload_0)
+        )
 
         not_retrieved = self.unauthorized.get(
             reverse(RETRIEVE_CABINET_URL, kwargs={"pk": created.data["id"]})
@@ -358,7 +389,9 @@ class CabinetApiCase(TestCase):
 
         payload_0 = p_gen.__next__()
 
-        created = self.authenticated.post(reverse(CREATE_CABINET_URL), data=payload_0)
+        created = self.authenticated.post(
+            reverse(CREATE_CABINET_URL), convert_model_payload_no_instances(payload_0)
+        )
 
         not_listed = self.unauthorized.get(reverse(LIST_CABINET_URL))
 
