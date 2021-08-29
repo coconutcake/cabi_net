@@ -7,6 +7,29 @@ from rest_framework.settings import api_settings
 from rest_framework.response import Response
 from cabinet.serializers import *
 from drf_yasg.utils import swagger_auto_schema
+from django.views.generic import View
+
+
+class CabinetCustomizeView(View):
+    template_name = "cabinet/customize.html"
+    
+    def get(self, request, *args, **kwargs):
+        return render(
+            request, 
+            self.template_name, 
+            self.get_context(request)
+            )
+    
+
+    def get_context(self, request):
+        cabinets = Cabinet.objects.filter(owner=request.user)
+        units = U.objects.filter(cabinet__owner=request.user)
+        context = {
+            "cabinets": cabinets,
+            "units": units
+        }
+        return context
+
 
 
 API_COMMENTS = {
