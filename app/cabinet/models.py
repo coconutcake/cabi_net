@@ -37,13 +37,20 @@ class U(models.Model):
     position = models.IntegerField(
         _("pozycja"), validators=[MinValueValidator(1), MaxValueValidator(100)]
     )
+    
+    cabinet = models.ForeignKey(
+        Cabinet,
+        verbose_name=_("cabinet"), 
+        on_delete=models.CASCADE,
+        null=True,
+        )
 
     class Meta:
         verbose_name = _("U")
         verbose_name_plural = _("Us")
 
     def __str__(self):
-        return self.name
+        return f"U-{self.position}, C-{self.cabinet}"
 
     def get_absolute_url(self):
         return reverse("U_detail", kwargs={"pk": self.pk})

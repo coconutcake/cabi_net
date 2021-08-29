@@ -28,13 +28,13 @@ class CabinetCase(TestCase):
 
             string_gen = custom_string_gen(
                 big_letters=True, digits=True, gen_range=[5, 16]
-            )
+                )
 
             payload = {
                 "name": string_gen.__next__(),
                 "description": string_gen.__next__(),
                 "owner": self.user,
-            }
+                }
 
             yield payload
 

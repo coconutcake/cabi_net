@@ -96,14 +96,24 @@ class CabinetCreateApiView(generics.CreateAPIView):
         prepared = self.responce_serializer(created)
         headers = self.get_success_headers(serializer.data)
         return Response(prepared.data, status=status.HTTP_201_CREATED, headers=headers)
-        # return super().post(request, *args, **kwargs)
-
+        
+        
     def perform_create(self, serializer):
         """
         Performs object creation and filling owner field 
         with request.user instance
         """
         return serializer.save(owner=self.request.user)
+    
+    
+    def perform_u_creation(self, cabinet, u_count):
+        """ 
+        Performs u creation according to u_count
+        """
+        model = U
+        for obj in range(u_count):
+            model.objects.create(cabi=cabinet, position=obj+1)
+        
 
 
 class CabinetUpdateApiView(generics.UpdateAPIView):
@@ -164,6 +174,14 @@ class UListApiView(generics.ListAPIView):
     model = U
     serializer_class = USerializer
     queryset = model.objects.all()
+    
+    def get_queryset(self):
+        """
+        Returns only owned cabinets
+        """
+        queryset = super(__class__, self).get_queryset()
+        queryset = queryset.filter(cabinet__owner=self.request.user)
+        return queryset
 
     @swagger_auto_schema(
         tags=[model.__name__],
@@ -178,6 +196,14 @@ class URetrieveApiView(generics.RetrieveAPIView):
     model = U
     serializer_class = USerializer
     queryset = model.objects.all()
+
+    def get_queryset(self):
+        """
+        Returns only owned cabinets
+        """
+        queryset = super(__class__, self).get_queryset()
+        queryset = queryset.filter(cabinet__owner=self.request.user)
+        return queryset
 
     @swagger_auto_schema(
         tags=[model.__name__],
@@ -207,7 +233,15 @@ class UUpdateApiView(generics.UpdateAPIView):
     respose_serializer = USerializer
     serializer_class = USerializer
     queryset = model.objects.all()
-
+     
+    def get_queryset(self):
+        """
+        Returns only owned cabinets
+        """
+        queryset = super(__class__, self).get_queryset()
+        queryset = queryset.filter(cabinet__owner=self.request.user)
+        return queryset
+    
     @swagger_auto_schema(
         tags=[model.__name__],
         operation_description=API_COMMENTS.get("put") + model.__name__,
@@ -229,6 +263,14 @@ class UDeleteApiView(generics.DestroyAPIView):
     model = U
     serializer_class = USerializer
     queryset = model.objects.all()
+    
+    def get_queryset(self):
+        """
+        Returns only owned cabinets
+        """
+        queryset = super(__class__, self).get_queryset()
+        queryset = queryset.filter(cabinet__owner=self.request.user)
+        return queryset
 
     @swagger_auto_schema(
         tags=[model.__name__],

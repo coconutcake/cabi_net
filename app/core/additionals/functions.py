@@ -134,3 +134,14 @@ def convert_model_payload_no_instances(payload: dict):
 
     return obj_dict
 
+def exclude_fields(excluded_fields: List, payloads: List):
+    """
+    Exclude fields from given payloads in List
+    """
+    if len(excluded_fields) > 0 and len(payloads) > 0:
+        for payload in payloads:
+            for field in excluded_fields:
+                try:
+                    payload.pop(field)
+                except:
+                    raise Exception
